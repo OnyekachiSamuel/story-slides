@@ -24,6 +24,7 @@ struct StorySlidesViewModel {
 public class StorySlides : UIViewController {
 
     var backgroundSound: AVAudioPlayer?
+    var currentIndex = 0
     var screenTimer: Timer!
     var viewModel: StorySlidesViewModel!
 
@@ -31,16 +32,18 @@ public class StorySlides : UIViewController {
         super.viewDidLoad()
         view.backgroundColor = #colorLiteral(red: 0.9651797414, green: 0.6645704508, blue: 0.358951211, alpha: 1)
         viewModel = StorySlidesViewModel()
-        setupViews(viewModel: viewModel)
-//        screenTimer = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(ScreenView.rotateStar(imageView:)), userInfo: nil, repeats: true)
-//                play()
-
     }
 
-//    public override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        screenTimer = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(ScreenView.rotateStar(imageView:)), userInfo: nil, repeats: true)
-//    }
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        presentFirstSlide()
+
+        screenTimer = Timer.scheduledTimer(withTimeInterval: 2,
+                                           repeats: true) { [weak self] _ in
+                                            self?.presentNextSlide()
+        }
+    }
 
     public override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -48,45 +51,57 @@ public class StorySlides : UIViewController {
         screenTimer.invalidate()
     }
 
-    @objc func updateUI(headerText: String, imageName: String, message: String, starImage: String) {
+    func presentFirstSlide() {
+        currentIndex = 0
 
-        guard let image = UIImage(named: imageName), let star = UIImage(named: starImage) else { return }
-        let contentView = ScreenView(frame: CGRect(x: view.frame.origin.x,
-                                                   y: view.frame.origin.y,
-                                                   width: view.frame.width - 20,
-                                                   height: view.frame.size.height - 120), message: message,
-                                                                                          headerText: headerText, screenImage: image , starImage: star)
+        guard
+            let slide = makeScreenView(index: currentIndex)
+            else { return }
 
-        view.addSubview(contentView)
-
+        presentSlide(slide)
     }
 
-    func setupViews(viewModel: StorySlidesViewModel) {
-        let headerText = viewModel.headerText
-        let imageString = viewModel.imageString
-        let messageText = viewModel.messageText
+    func presentNextSlide() {
+        currentIndex += 1
+
+        guard
+            let slide = makeScreenView(index: currentIndex)
+            else { return }
+
+        presentSlide(slide)
+    }
+
+    func presentSlide(_ slide: ScreenView) {
+        slide.transform = CGAffineTransform(translationX: view.frame.width, y: 0)
+
+        view.addSubview(slide)
+
+        UIView.animate(withDuration: 0.25) {
+            slide.transform = .identity
+        }
+    }
+
+    func makeScreenView(index: Int) -> ScreenView? {
+        let headerText = viewModel.headerText[index]
+        let imageString = viewModel.imageString[index]
+        let messageText = viewModel.messageText[index]
         let starImageString = viewModel.starImage
 
-        for index in 0..<headerText.count {
-            if index == 0, let image = UIImage(named: imageString[index]), let star = UIImage(named: starImageString) {
+        guard
+            let image = UIImage(named: imageString),
+            let star = UIImage(named: starImageString)
+            else { return nil }
 
-                print("I got here")
+        print("Made screen view #\(index)")
 
-                let contentView = ScreenView(frame: CGRect(x: view.frame.origin.x,
-                                                           y: view.frame.origin.y,
-                                                           width: view.frame.width - 20,
-                                                           height: view.frame.size.height - 120), message: messageText[index], headerText: headerText[index], screenImage: image , starImage: star)
-
-                view.addSubview(contentView)
-            } else {
-
-                print("I am here")
-
-//                updateUI(headerText: headerText[index], imageName: imageString[index], message: messageText[index], starImage: starImageString)
-
-            }
-        }
-
+        return ScreenView(frame: CGRect(x: view.frame.origin.x,
+                                        y: view.frame.origin.y,
+                                        width: view.frame.width - 20,
+                                        height: view.frame.size.height - 120),
+                          message: messageText,
+                          headerText: headerText,
+                          screenImage: image,
+                          starImage: star)
     }
 
     func play() {
@@ -172,9 +187,6 @@ class ScreenView: UIView {
         }
     }
 }
-
-
-
 
 PlaygroundPage.current.liveView = StorySlides()
 
