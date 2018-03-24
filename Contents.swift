@@ -9,7 +9,7 @@ struct StorySlidesViewModel {
     let starImage: String
 
     init() {
-        self.headerText = ["Story about us", "In the beginning", "Andela derived from Mandela", "It's Competition", "Amazing Andelans", "Empowerment for Leadership", "I am Andelan; iOS developer", "#TIA == Wakanda"]
+        self.headerText = ["Story about us", "In the beginning", "Andela derived from Mandela", "It's Competition", "Talented People", "Amazing Andelans", "Empowerment for Leadership", "I am Andelan; iOS developer", "#TIA == Wakanda"]
 
         self.imageString = ["BlackPanther", "Beginning", "Mandela", "Competition", "Idea", "AmazingPeople", "Empowerment", "Samuel", "Andela"]
 
@@ -25,35 +25,57 @@ public class StorySlides : UIViewController {
 
     var backgroundSound: AVAudioPlayer?
     var currentIndex = 0
-    var screenTimer: Timer!
+    var screenTimer: Timer?
+    var starTimer: Timer?
     var viewModel: StorySlidesViewModel!
 
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = #colorLiteral(red: 0.9651797414, green: 0.6645704508, blue: 0.358951211, alpha: 1)
         viewModel = StorySlidesViewModel()
+//        play()
     }
 
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         presentFirstSlide()
-
-        screenTimer = Timer.scheduledTimer(withTimeInterval: 2,
+        screenTimer = Timer.scheduledTimer(withTimeInterval: 4,
                                            repeats: true) { [weak self] _ in
                                             self?.presentNextSlide()
         }
+
+//        starTimer = Timer.scheduledTimer(withTimeInterval: 0.4,
+//                                         repeats: true) { [weak self] _ in
+//                                            self?.presentStarView()
+//        }
+
     }
+
 
     public override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
-        screenTimer.invalidate()
+        screenTimer?.invalidate()
     }
 
-    func presentFirstSlide() {
-        currentIndex = 0
+//    func presentStarView() {
+//
+//        guard let star = UIImage(named: viewModel.starImage)
+//            else { return }
+//
+//        let starImageView = UIImageView(frame: CGRect(x: 164,
+//                                                      y: 618,
+//                                                      width: 48,
+//                                                      height: 44))
+//        starImageView.image = star
+//        UIView.animate(withDuration: 0.1) {
+//            starImageView.transform = CGAffineTransform(rotationAngle: 90)
+//            self.view.addSubview(starImageView)
+//        }
+//    }
 
+    func presentFirstSlide() {
         guard
             let slide = makeScreenView(index: currentIndex)
             else { return }
@@ -64,14 +86,24 @@ public class StorySlides : UIViewController {
     func presentNextSlide() {
         currentIndex += 1
 
-        guard
-            let slide = makeScreenView(index: currentIndex)
-            else { return }
+        if currentIndex <= (viewModel.messageText.count - 1) {
+            guard
+                let slide = makeScreenView(index: currentIndex)
+                else { return }
 
-        presentSlide(slide)
+            presentSlide(slide)
+        } else {
+            screenTimer?.invalidate()
+        }
     }
 
     func presentSlide(_ slide: ScreenView) {
+
+        if currentIndex > 0 {
+            print("I am here")
+            slide.removeFromSuperview()
+        }
+
         slide.transform = CGAffineTransform(translationX: view.frame.width, y: 0)
 
         view.addSubview(slide)
@@ -91,8 +123,6 @@ public class StorySlides : UIViewController {
             let image = UIImage(named: imageString),
             let star = UIImage(named: starImageString)
             else { return nil }
-
-        print("Made screen view #\(index)")
 
         return ScreenView(frame: CGRect(x: view.frame.origin.x,
                                         y: view.frame.origin.y,
@@ -143,18 +173,18 @@ class ScreenView: UIView {
     }
 
     func setLayout() {
-        let headerTextLabel = UILabel(frame: CGRect(x: 5,
-                                                    y: 14,
-                                                    width: frame.size.width - 420, height: frame.size.height - 300))
+        let headerTextLabel = UILabel(frame: CGRect(x: 50,
+                                                    y: 16,
+                                                    width: frame.size.width * 0.7, height: frame.size.height * 1.1))
 
-        let messageLabel = UILabel(frame: CGRect(x: 15,
-                                                 y: 15,
-                                                 width: frame.size.width - 420, height: frame.height - 100))
+        let messageLabel = UILabel(frame: CGRect(x: 18,
+                                                 y: 18,
+                                                 width: frame.size.width - 18, height: frame.height * 1.5))
 
         let screenImageView = UIImageView(frame: CGRect(x: frame.origin.x,
                                                         y: frame.origin.y,
                                                         width: 375,
-                                                        height: frame.height * 0.28))
+                                                        height: frame.height * 0.5))
         let starImageView = UIImageView(frame: CGRect(x: 164,
                                                       y: 618,
                                                       width: 48,
@@ -173,12 +203,17 @@ class ScreenView: UIView {
         screenImageView.image = screenImage
         screenImageView.contentMode = .scaleAspectFill
         starImageView.image = starImage
-        ScreenView.rotateStar(imageView: starImageView)
+
+        headerTextLabel.tag = 1
+        messageLabel.tag = 2
+        screenImageView.tag = 3
+        starImageView.tag = 4
 
         addSubview(screenImageView)
         addSubview(headerTextLabel)
         addSubview(messageLabel)
         addSubview(starImageView)
+
     }
 
     @objc class func rotateStar(imageView: UIImageView) {
