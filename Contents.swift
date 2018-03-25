@@ -25,6 +25,7 @@ public class StorySlides : UIViewController {
 
     var backgroundSound: AVAudioPlayer?
     var currentIndex = 0
+    var currentSlide: ScreenView?
     var screenTimer: Timer?
     var starTimer: Timer?
     var viewModel: StorySlidesViewModel!
@@ -76,6 +77,9 @@ public class StorySlides : UIViewController {
 //    }
 
     func presentFirstSlide() {
+        currentIndex = 0
+        currentSlide = nil
+
         guard
             let slide = makeScreenView(index: currentIndex)
             else { return }
@@ -99,18 +103,20 @@ public class StorySlides : UIViewController {
 
     func presentSlide(_ slide: ScreenView) {
 
-        if currentIndex > 0 {
-            print("I am here")
-            slide.removeFromSuperview()
-        }
-
         slide.transform = CGAffineTransform(translationX: view.frame.width, y: 0)
 
         view.addSubview(slide)
 
-        UIView.animate(withDuration: 0.25) {
-            slide.transform = .identity
-        }
+        UIView.animate(withDuration: 0.25,
+                       animations: { slide.transform = .identity },
+                       completion: { _ in
+                        slide.startAnimatingStars()
+
+                        self.currentSlide?.stopAnimatingStars()
+                        self.currentSlide?.removeFromSuperview()
+
+                        self.currentSlide = slide
+        })
     }
 
     func makeScreenView(index: Int) -> ScreenView? {
@@ -131,7 +137,8 @@ public class StorySlides : UIViewController {
                           message: messageText,
                           headerText: headerText,
                           screenImage: image,
-                          starImage: star)
+                          starImage: star,
+                          starCount: index + 1)
     }
 
     func play() {
@@ -157,8 +164,14 @@ class ScreenView: UIView {
     var headerText: String!
     var screenImage: UIImage!
     var starImage: UIImage!
+    var starImageViews: [UIImageView] = []
 
-    init(frame: CGRect, message: String, headerText: String, screenImage: UIImage, starImage: UIImage) {
+    init(frame: CGRect,
+         message: String,
+         headerText: String,
+         screenImage: UIImage,
+         starImage: UIImage,
+         starCount: Int) {
         super.init(frame: frame)
 
         self.messageContent = message
@@ -216,10 +229,15 @@ class ScreenView: UIView {
 
     }
 
-    @objc class func rotateStar(imageView: UIImageView) {
-        self.animate(withDuration: 1.0) {
-            imageView.transform = CGAffineTransform(rotationAngle: 90)
+    func startAnimatingStars() {
+        for starImageView in starImageViews {
+            self.animate(withDuration: 1.0) {
+                imageView.transform = CGAffineTransform(rotationAngle: 90)
+            }
         }
+    }
+
+    func stopAnimatingStars() {
     }
 }
 
