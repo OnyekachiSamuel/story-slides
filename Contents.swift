@@ -7,7 +7,7 @@ struct StorySlidesViewModel {
     let imageString: [String]
     let messageText: [String]
     let starImage: String
-    let launchScrenViewHeaderText: String
+    let launchScreenViewHeaderText: String
     let instructionText: String
 
     init() {
@@ -17,7 +17,7 @@ struct StorySlidesViewModel {
 
         self.instructionText = "Do you want to embark on the tour? If so, click on the button below."
 
-        self.launchScrenViewHeaderText = "You are about to watch the story slides of great minds in Africa who are passionate about changing the world through technology."
+        self.launchScreenViewHeaderText = "You are about to watch the story slides of great minds in Africa who are passionate about changing the world through technology."
 
         self.messageText = ["It's not just a movie; it's a movement. It's a story about a people whose voice has been faint; endowed with great tech skills. It's Wakanda; Andela is recreating the virtual Wakanda to reality. Andela is preparing and repositioning future tech leaders.", "Andela was founded in September 2014 to build a network of tech leaders in Africa to bridge the gap between U.S and African tech sectors.", "Across the world brilliance is evenly distributed but opportunity is not. A quote by Andela CEO, Jeremy Johnson", "Andela is a competitive four years paid fellowship program that trains top software talents and on-boards into long distance business engagement with big companies", "There’s extraordinary untapped talent out there; We just need to remove the barriers to help talented young launch carriers without debt and without leaving home. Quote by Christina Sass, Andela President.", "Andelan’s are amazing people with great culture and mindset of changing the world through tech.", "Andela is not a brain drain program; It bridges skill gap and empowers youths for leadership.", "I love learning new things. I have great interest in security and cryptography. I am exploring and I love sharing what I have learned to the community.", "This Is Andela. The Wakanda of Africa. The future belongs to us."]
 
@@ -37,7 +37,7 @@ public class StorySlides : UIViewController {
 
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        launchScrenView()
+        launchScreenView()
     }
 
     public override func viewDidLoad() {
@@ -94,12 +94,22 @@ public class StorySlides : UIViewController {
     }
 
     func presentSlide(_ slide: ScreenView) {
+        let animations: [(ScreenView) -> Void] = [presentSlideFromRight,
+                                                  presentSlideCurlUp,
+                                                  presentSlideCrossDissolve,
+                                                  presentSlideFromTop,
+                                                  presentSlideFromBottom]
+        let index = Int(arc4random_uniform(UInt32(animations.count)))
 
+        animations[index](slide)
+    }
+
+    func presentSlideFromRight(_ slide: ScreenView) {
         slide.transform = CGAffineTransform(translationX: view.frame.width, y: 0)
 
         view.addSubview(slide)
 
-        UIView.animate(withDuration: 0.25,
+        UIView.animate(withDuration: 0.75,
                        animations: { slide.transform = .identity },
                        completion: { _ in
                         slide.startAnimatingStars()
@@ -111,11 +121,89 @@ public class StorySlides : UIViewController {
         })
     }
 
-    func launchScrenView() {
+    func presentSlideFromBottom(_ slide: ScreenView) {
+        slide.transform = CGAffineTransform(translationX: 0, y: view.frame.height)
 
-        let launchScren = LaunchScreenView(frame: CGRect(x: view.frame.origin.x,
-                                                         y: view.frame.origin.y,
-                                                         width: view.frame.width, height: view.frame.height), launchContent: viewModel.launchScrenViewHeaderText, instructionText: viewModel.instructionText, starString: viewModel.starImage)
+        view.addSubview(slide)
+
+        UIView.animate(withDuration: 0.75,
+                       animations: { slide.transform = .identity },
+                       completion: { _ in
+                        slide.startAnimatingStars()
+
+                        self.currentSlide?.stopAnimatingStars()
+                        self.currentSlide?.removeFromSuperview()
+
+                        self.currentSlide = slide
+        })
+    }
+
+    func presentSlideFromTop(_ slide: ScreenView) {
+        slide.transform = CGAffineTransform(translationX: 0, y: -view.frame.height)
+
+        view.addSubview(slide)
+
+        UIView.animate(withDuration: 0.75,
+                       animations: { slide.transform = .identity },
+                       completion: { _ in
+                        slide.startAnimatingStars()
+
+                        self.currentSlide?.stopAnimatingStars()
+                        self.currentSlide?.removeFromSuperview()
+
+                        self.currentSlide = slide
+        })
+    }
+
+    func presentSlideCurlUp(_ slide: ScreenView) {
+        guard
+            let current = currentSlide
+            else { presentSlideFromRight(slide); return }
+
+        UIView.transition(from: current,
+                          to: slide,
+                          duration: 0.75,
+                          options: .transitionCurlUp) { _ in
+                            slide.startAnimatingStars()
+
+                            self.currentSlide?.stopAnimatingStars()
+
+                            self.currentSlide = slide
+        }
+    }
+
+    func presentSlideCrossDissolve(_ slide: ScreenView) {
+        guard
+            let current = currentSlide
+            else { presentSlideFromRight(slide); return }
+
+        UIView.transition(from: current,
+                          to: slide,
+                          duration: 0.75,
+                          options: .transitionCrossDissolve) { _ in
+                            slide.startAnimatingStars()
+
+                            self.currentSlide?.stopAnimatingStars()
+
+                            self.currentSlide = slide
+        }
+    }
+
+    func launchScreenView() {
+
+        let launchScreen = LaunchScreenView(frame: CGRect(x: view.frame.origin.x,
+                                                          y: view.frame.origin.y,
+                                                          width: view.frame.width, height: view.frame.height), launchContent: viewModel.launchScreenViewHeaderText, instructionText: viewModel.instructionText, starString: viewModel.starImage)
+
+        let pulse = CASpringAnimation(keyPath: "transform.scale")
+
+        pulse.autoreverses = true
+        pulse.damping = 1.0
+        pulse.duration = 0.6
+        pulse.fromValue = 0.95
+        pulse.initialVelocity = 0.5
+        pulse.repeatCount = 1000000
+        pulse.toValue = 1.0
 
         let pulse = CASpringAnimation(keyPath: "transform.scale")
 
@@ -141,9 +229,9 @@ public class StorySlides : UIViewController {
         tourButton.titleEdgeInsets = UIEdgeInsetsMake(10,10,15,10)
         tourButton.titleLabel?.adjustsFontSizeToFitWidth = true
 
-        tourButton.addTarget(self, action: #selector(StorySlides.tourButtonPressed), for: .touchUpInside)
+        tourButton.addTarget(self, action: #selector(StorySlides.tourButtonPressed(_:)), for: .touchUpInside)
 
-        launchScren.tag = 10
+        launchScreen.tag = 10
         tourButton.tag = 12
 
         view.addSubview(launchScren)
@@ -151,10 +239,10 @@ public class StorySlides : UIViewController {
     }
 
     @objc
-    func tourButtonPressed() {
-        if let launchScrenViewViewWithTag = view.viewWithTag(10),
+    func tourButtonPressed(_ sender: UIButton) {
+        if let launchScreenViewViewWithTag = view.viewWithTag(10),
             let tourButtonViewWithTag = view.viewWithTag(12) {
-            launchScrenViewViewWithTag.removeFromSuperview()
+            launchScreenViewViewWithTag.removeFromSuperview()
             tourButtonViewWithTag.removeFromSuperview()
         }
 
@@ -339,7 +427,7 @@ class ScreenView: UIView {
     var messageContent: String!
     var screenImage: UIImage!
     var starImage: UIImage!
-    var starImageViews: [UIImageView] = []
+    var starImageView: UIImageView!
 
     init(frame: CGRect,
          headerText: String,
@@ -373,10 +461,11 @@ class ScreenView: UIView {
                                                         y: frame.origin.y,
                                                         width: frame.width + 20,
                                                         height: frame.height * 0.5))
-        let starImageView = UIImageView(frame: CGRect(x: frame.width - 191,
-                                                      y: frame.height + 70,
-                                                      width: frame.width - 307,
-                                                      height: frame.height - 504))
+
+        starImageView = UIImageView(frame: CGRect(x: frame.width - 191,
+                                                  y: frame.height + 70,
+                                                  width: frame.width - 307,
+                                                  height: frame.height - 504))
 
         headerTextLabel.font = UIFont.boldSystemFont(ofSize: 22.0)
         headerTextLabel.lineBreakMode = .byTruncatingTail
@@ -397,7 +486,6 @@ class ScreenView: UIView {
         screenImageView.image = screenImage
 
         starImageView.image = starImage
-        starImageViews.append(starImageView)
 
         addSubview(screenImageView)
         addSubview(headerTextLabel)
@@ -405,16 +493,19 @@ class ScreenView: UIView {
         addSubview(starImageView)
     }
 
-    func startAnimatingStars() {
-        for starImageView in starImageViews {
-            UIView.animate(withDuration: 1.0) {
-                starImageView.transform = CGAffineTransform(rotationAngle: .pi)
-            }
+    func startAnimating() {
+        UIView.animate(withDuration: 0.75,
+                       delay: 0.25,
+                       options: <#T##UIViewAnimationOptions#>,
+                       animations: <#T##() -> Void#>, completion: <#T##((Bool) -> Void)?##((Bool) -> Void)?##(Bool) -> Void#>)
+
+        UIView.animate(withDuration: 1.0) {
+            starImageView.transform = CGAffineTransform(rotationAngle: .pi)
         }
     }
 
-    func stopAnimatingStars() {
-    }
+//    func stopAnimating() {
+//    }
 }
 
 
