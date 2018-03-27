@@ -33,7 +33,6 @@ public class StorySlides : UIViewController {
     var currentIndex = 0
     var currentSlide: ScreenView?
     var screenTimer: Timer?
-    var starTimer: Timer?
     var viewModel: StorySlidesViewModel!
 
     public override func viewDidAppear(_ animated: Bool) {
@@ -118,27 +117,37 @@ public class StorySlides : UIViewController {
                                                          y: view.frame.origin.y,
                                                          width: view.frame.width, height: view.frame.height), launchContent: viewModel.launchScrenViewHeaderText, instructionText: viewModel.instructionText, starString: viewModel.starImage)
 
+        let pulse = CASpringAnimation(keyPath: "transform.scale")
+
+        pulse.autoreverses = true
+        pulse.damping = 1.0
+        pulse.duration = 0.6
+        pulse.fromValue = 0.95
+        pulse.initialVelocity = 0.5
+        pulse.repeatCount = 1000000
+        pulse.toValue = 1.0
+
         let tourButton = UIButton()
 
-        tourButton.setTitle("Click me", for: .normal)
+        tourButton.backgroundColor = UIColor.darkGray
         tourButton.frame = CGRect(x: 150,
                                   y: 460,
                                   width: 70,
                                   height: 30)
+
+        tourButton.layer.cornerRadius = 5
+        tourButton.layer.add(pulse, forKey: nil)
+        tourButton.setTitle("Click me", for: .normal)
         tourButton.titleEdgeInsets = UIEdgeInsetsMake(10,10,15,10)
         tourButton.titleLabel?.adjustsFontSizeToFitWidth = true
-        tourButton.backgroundColor = UIColor.darkGray
-        tourButton.layer.cornerRadius = 5
 
         tourButton.addTarget(self, action: #selector(StorySlides.tourButtonPressed), for: .touchUpInside)
 
         launchScren.tag = 10
         tourButton.tag = 12
 
-
         view.addSubview(launchScren)
         view.addSubview(tourButton)
-
     }
 
     @objc
@@ -151,7 +160,7 @@ public class StorySlides : UIViewController {
 
         presentFirstSlide()
         playAudio()
-        screenTimer = Timer.scheduledTimer(withTimeInterval: 4,
+        screenTimer = Timer.scheduledTimer(withTimeInterval: 8,
                                            repeats: true) { [weak self] _ in
                                             self?.presentNextSlide()
                                             self?.drawReplayButton()
@@ -183,15 +192,27 @@ public class StorySlides : UIViewController {
         if currentIndex == viewModel.messageText.count {
             let replayButton = UIButton()
 
-            replayButton.setTitle("Replay slides", for: .normal)
+            replayButton.backgroundColor = UIColor.darkGray
             replayButton.frame = CGRect(x: 150,
                                         y: 460,
-                                        width: 70,
+                                        width: 80,
                                         height: 30)
+
+            replayButton.layer.cornerRadius = 5
+            replayButton.setTitle("Replay slides", for: .normal)
             replayButton.titleEdgeInsets = UIEdgeInsetsMake(10,10,15,10)
             replayButton.titleLabel?.adjustsFontSizeToFitWidth = true
-            replayButton.backgroundColor = UIColor.darkGray
-            replayButton.layer.cornerRadius = 5
+
+            replayButton.center.x = self.view.frame.width + 30
+
+            UIView.animate(withDuration: 1.0,
+                           delay: 0,
+                           usingSpringWithDamping: 1.0,
+                           initialSpringVelocity: 6.0,
+                           options: .curveEaseIn, animations: ({
+                replayButton.center.x = self.view.frame.width / 2
+
+            }), completion: nil)
 
             replayButton.addTarget(self, action: #selector(replayButtonPressed), for: .touchUpInside)
 
@@ -208,7 +229,7 @@ public class StorySlides : UIViewController {
             replayViewWithTag.removeFromSuperview()
             presentFirstSlide()
             playAudio()
-            screenTimer = Timer.scheduledTimer(withTimeInterval: 4,
+            screenTimer = Timer.scheduledTimer(withTimeInterval: 8,
                                                repeats: true) { [weak self] _ in
                                                 self?.presentNextSlide()
                                                 self?.drawReplayButton()
@@ -276,15 +297,6 @@ class LaunchScreenView: UIView {
 
         paragraphStyle.lineSpacing = 2
 
-
-        view.backgroundColor = UIColor.white
-        view.layer.masksToBounds = false
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOffset = CGSize.zero
-        view.layer.shadowOpacity = 1
-        view.layer.shadowRadius = 10
-        view.layer.shadowPath = UIBezierPath(rect: view.bounds).cgPath
-
         instructionLabel.contentMode = .scaleAspectFill
         instructionLabel.font = UIFont.boldSystemFont(ofSize: 24)
         instructionLabel.lineBreakMode = .byTruncatingTail
@@ -303,6 +315,13 @@ class LaunchScreenView: UIView {
         headerLabel.textColor = UIColor.orange
         headerLabel.sizeToFit()
 
+        view.backgroundColor = UIColor.white
+        view.layer.masksToBounds = false
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOffset = CGSize.zero
+        view.layer.shadowOpacity = 1
+        view.layer.shadowRadius = 10
+        view.layer.shadowPath = UIBezierPath(rect: view.bounds).cgPath
 
         starImageView.image = star
 
@@ -330,8 +349,8 @@ class ScreenView: UIView {
          starCount: Int) {
         super.init(frame: frame)
 
-        self.messageContent = message
         self.headerText = headerText
+        self.messageContent = message
         self.screenImage = screenImage
         self.starImage = starImage
         setLayout()
@@ -389,7 +408,7 @@ class ScreenView: UIView {
     func startAnimatingStars() {
         for starImageView in starImageViews {
             UIView.animate(withDuration: 1.0) {
-                starImageView.transform = CGAffineTransform(rotationAngle: 90)
+                starImageView.transform = CGAffineTransform(rotationAngle: .pi)
             }
         }
     }
@@ -397,6 +416,7 @@ class ScreenView: UIView {
     func stopAnimatingStars() {
     }
 }
+
 
 PlaygroundPage.current.liveView = StorySlides()
 
