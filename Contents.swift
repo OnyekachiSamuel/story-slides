@@ -143,21 +143,23 @@ public class StorySlides : UIViewController {
 
     @objc
     func tourButtonPressed() {
-
         if let launchScrenViewViewWithTag = view.viewWithTag(10),
             let tourButtonViewWithTag = view.viewWithTag(12) {
             launchScrenViewViewWithTag.removeFromSuperview()
             tourButtonViewWithTag.removeFromSuperview()
         }
+
         presentFirstSlide()
-        play()
+        playAudio()
         screenTimer = Timer.scheduledTimer(withTimeInterval: 4,
                                            repeats: true) { [weak self] _ in
                                             self?.presentNextSlide()
+                                            self?.drawReplayButton()
+                                            self?.stopAudio()
         }
     }
 
-    func play() {
+    func playAudio() {
         guard let path = Bundle.main.path(forResource: "play.mp3", ofType:nil)
             else { return }
         let url = URL(fileURLWithPath: path)
@@ -169,7 +171,50 @@ public class StorySlides : UIViewController {
         } catch {
             print(error.localizedDescription)
         }
+    }
 
+    func stopAudio() {
+        if currentIndex == viewModel.messageText.count {
+            backgroundSound?.stop()
+        }
+    }
+
+    func drawReplayButton() {
+        if currentIndex == viewModel.messageText.count {
+            let replayButton = UIButton()
+
+            replayButton.setTitle("Replay slides", for: .normal)
+            replayButton.frame = CGRect(x: 150,
+                                        y: 460,
+                                        width: 70,
+                                        height: 30)
+            replayButton.titleEdgeInsets = UIEdgeInsetsMake(10,10,15,10)
+            replayButton.titleLabel?.adjustsFontSizeToFitWidth = true
+            replayButton.backgroundColor = UIColor.darkGray
+            replayButton.layer.cornerRadius = 5
+
+            replayButton.addTarget(self, action: #selector(replayButtonPressed), for: .touchUpInside)
+
+            replayButton.tag = 13
+            view.addSubview(replayButton)
+        }
+    }
+
+    @objc
+    func replayButtonPressed() {
+        if let replayViewWithTag = view.viewWithTag(13) {
+            currentIndex = 0
+            currentSlide?.removeFromSuperview()
+            replayViewWithTag.removeFromSuperview()
+            presentFirstSlide()
+            playAudio()
+            screenTimer = Timer.scheduledTimer(withTimeInterval: 4,
+                                               repeats: true) { [weak self] _ in
+                                                self?.presentNextSlide()
+                                                self?.drawReplayButton()
+                                                self?.stopAudio()
+            }
+        }
     }
 }
 
@@ -199,6 +244,8 @@ class LaunchScreenView: UIView {
             let star = UIImage(named: starString)
             else { return  }
 
+        let attributedString = NSMutableAttributedString(string: launchContent)
+
         let instructionLabel = UILabel(frame: CGRect(x: frame.origin.x + 20,
                                                      y: frame.origin.y + 300,
                                                      width: frame.width - 40,
@@ -209,15 +256,26 @@ class LaunchScreenView: UIView {
                                                 width: frame.width - 35,
                                                 height: frame.height * 0.28))
 
+        let paragraphStyle = NSMutableParagraphStyle()
+
+
         let starImageView = UIImageView(frame: CGRect(x: 164,
                                                       y: 618,
-                                                      width: 48,
-                                                      height: 44))
+                                                      width: frame.width - 327,
+                                                      height: frame.height - 624))
 
         let view = UIView(frame: CGRect(x: frame.origin.x + 15,
                                         y: frame.origin.y + 30,
                                         width: frame.width - 30,
                                         height: frame.height * 0.28))
+
+
+        attributedString.addAttribute(NSAttributedStringKey.paragraphStyle,
+                                      value:paragraphStyle,
+                                      range:NSMakeRange(0, attributedString.length))
+
+        paragraphStyle.lineSpacing = 2
+
 
         view.backgroundColor = UIColor.white
         view.layer.masksToBounds = false
@@ -236,13 +294,15 @@ class LaunchScreenView: UIView {
         instructionLabel.textColor = UIColor.white
         instructionLabel.sizeToFit()
 
+        headerLabel.attributedText = attributedString
         headerLabel.contentMode = .scaleAspectFill
+        headerLabel.font = UIFont.systemFont(ofSize: 19.0)
         headerLabel.lineBreakMode = .byTruncatingTail
         headerLabel.numberOfLines = 4
-        headerLabel.text = launchContent
         headerLabel.textAlignment = .center
         headerLabel.textColor = UIColor.orange
         headerLabel.sizeToFit()
+
 
         starImageView.image = star
 
@@ -283,21 +343,21 @@ class ScreenView: UIView {
 
     func setLayout() {
         let headerTextLabel = UILabel(frame: CGRect(x: frame.origin.x + 10,
-                                                    y: 16,
+                                                    y: frame.origin.y + 15,
                                                     width: frame.size.width - 20, height: frame.size.height * 1.1))
 
-        let messageLabel = UILabel(frame: CGRect(x: 18,
+        let messageLabel = UILabel(frame: CGRect(x: frame.origin.x + 18,
                                                  y: frame.size.height * 0.5 + 70,
                                                  width: frame.size.width - 18, height: frame.height * 1.5))
 
         let screenImageView = UIImageView(frame: CGRect(x: frame.origin.x,
                                                         y: frame.origin.y,
-                                                        width: 375,
+                                                        width: frame.width + 20,
                                                         height: frame.height * 0.5))
-        let starImageView = UIImageView(frame: CGRect(x: 164,
-                                                      y: 618,
-                                                      width: 48,
-                                                      height: 44))
+        let starImageView = UIImageView(frame: CGRect(x: frame.width - 191,
+                                                      y: frame.height + 70,
+                                                      width: frame.width - 307,
+                                                      height: frame.height - 504))
 
         headerTextLabel.font = UIFont.boldSystemFont(ofSize: 22.0)
         headerTextLabel.lineBreakMode = .byTruncatingTail
