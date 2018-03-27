@@ -94,12 +94,22 @@ public class StorySlides : UIViewController {
     }
 
     func presentSlide(_ slide: ScreenView) {
+        let animations: [(ScreenView) -> Void] = [presentSlideFromRight,
+                                                  presentSlideCurlUp,
+                                                  presentSlideCrossDissolve,
+                                                  presentSlideFromTop,
+                                                  presentSlideFromBottom]
+        let index = Int(arc4random_uniform(UInt32(animations.count)))
 
+        animations[index](slide)
+    }
+
+    func presentSlideFromRight(_ slide: ScreenView) {
         slide.transform = CGAffineTransform(translationX: view.frame.width, y: 0)
 
         view.addSubview(slide)
 
-        UIView.animate(withDuration: 0.25,
+        UIView.animate(withDuration: 0.75,
                        animations: { slide.transform = .identity },
                        completion: { _ in
                         slide.startAnimatingStars()
@@ -109,6 +119,74 @@ public class StorySlides : UIViewController {
 
                         self.currentSlide = slide
         })
+    }
+
+    func presentSlideFromBottom(_ slide: ScreenView) {
+        slide.transform = CGAffineTransform(translationX: 0, y: view.frame.height)
+
+        view.addSubview(slide)
+
+        UIView.animate(withDuration: 0.75,
+                       animations: { slide.transform = .identity },
+                       completion: { _ in
+                        slide.startAnimatingStars()
+
+                        self.currentSlide?.stopAnimatingStars()
+                        self.currentSlide?.removeFromSuperview()
+
+                        self.currentSlide = slide
+        })
+    }
+
+    func presentSlideFromTop(_ slide: ScreenView) {
+        slide.transform = CGAffineTransform(translationX: 0, y: -view.frame.height)
+
+        view.addSubview(slide)
+
+        UIView.animate(withDuration: 0.75,
+                       animations: { slide.transform = .identity },
+                       completion: { _ in
+                        slide.startAnimatingStars()
+
+                        self.currentSlide?.stopAnimatingStars()
+                        self.currentSlide?.removeFromSuperview()
+
+                        self.currentSlide = slide
+        })
+    }
+
+    func presentSlideCurlUp(_ slide: ScreenView) {
+        guard
+            let current = currentSlide
+            else { presentSlideFromRight(slide); return }
+
+        UIView.transition(from: current,
+                          to: slide,
+                          duration: 0.75,
+                          options: .transitionCurlUp) { _ in
+                            slide.startAnimatingStars()
+
+                            self.currentSlide?.stopAnimatingStars()
+
+                            self.currentSlide = slide
+        }
+    }
+
+    func presentSlideCrossDissolve(_ slide: ScreenView) {
+        guard
+            let current = currentSlide
+            else { presentSlideFromRight(slide); return }
+
+        UIView.transition(from: current,
+                          to: slide,
+                          duration: 0.75,
+                          options: .transitionCrossDissolve) { _ in
+                            slide.startAnimatingStars()
+
+                            self.currentSlide?.stopAnimatingStars()
+
+                            self.currentSlide = slide
+        }
     }
 
     func launchScrenView() {
@@ -141,17 +219,19 @@ public class StorySlides : UIViewController {
         tourButton.titleEdgeInsets = UIEdgeInsetsMake(10,10,15,10)
         tourButton.titleLabel?.adjustsFontSizeToFitWidth = true
 
-        tourButton.addTarget(self, action: #selector(StorySlides.tourButtonPressed), for: .touchUpInside)
+        tourButton.addTarget(self, action: #selector(StorySlides.tourButtonPressed(_:)), for: .touchUpInside)
 
         launchScren.tag = 10
         tourButton.tag = 12
 
         view.addSubview(launchScren)
         view.addSubview(tourButton)
+
+        //tourButtonPressed(tourButton)
     }
 
     @objc
-    func tourButtonPressed() {
+    func tourButtonPressed(_ sender: UIButton) {
         if let launchScrenViewViewWithTag = view.viewWithTag(10),
             let tourButtonViewWithTag = view.viewWithTag(12) {
             launchScrenViewViewWithTag.removeFromSuperview()
