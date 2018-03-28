@@ -11,15 +11,15 @@ struct StorySlidesViewModel {
     let instructionText: String
 
     init() {
-        self.headerText = ["Story about us", "In the beginning", "Andela derived from Mandela", "It's Competition", "Talented People", "Amazing Andelans", "Empowerment for Leadership", "I am Andelan; iOS developer", "#TIA == Wakanda"]
+        self.headerText = ["Story about us", "In the beginning", "Andela derived from Mandela", "The Funding", "It's Competition", "Talented People", "The Hackathon", "Amazing Andelans", "The Visit", "Empowerment for Leadership", "Partnership", "I am Andelan; iOS developer", "#TIA == Wakanda"]
 
-        self.imageString = ["BlackPanther", "Beginning", "Mandela", "Competition", "Idea", "AmazingPeople", "Empowerment", "Samuel", "Andela"]
+        self.imageString = ["BlackPanther", "Beginning", "Mandela", "Funding", "Competition", "Idea", "Hackathon", "AmazingPeople", "Visit", "Empowerment", "Partnership", "Samuel", "Andela"]
 
         self.instructionText = "Do you want to embark on the tour? If so, click on the button below."
 
         self.launchScreenViewHeaderText = "You are about to watch the story slides of great minds in Africa who are passionate about changing the world through technology."
 
-        self.messageText = ["It's not just a movie; it's a movement. It's a story about a people whose voice has been faint; endowed with great tech skills. It's Wakanda; Andela is recreating the virtual Wakanda to reality. Andela is preparing and repositioning future tech leaders.", "Andela was founded in September 2014 to build a network of tech leaders in Africa to bridge the gap between U.S and African tech sectors.", "Across the world brilliance is evenly distributed but opportunity is not. A quote by Andela CEO, Jeremy Johnson", "Andela is a competitive four years paid fellowship program that trains top software talents and on-boards into long distance business engagement with big companies", "There’s extraordinary untapped talent out there; We just need to remove the barriers to help talented young launch carriers without debt and without leaving home. Quote by Christina Sass, Andela President.", "Andelan’s are amazing people with great culture and mindset of changing the world through tech.", "Andela is not a brain drain program; It bridges skill gap and empowers youths for leadership.", "I love learning new things. I have great interest in security and cryptography. I am exploring and I love sharing what I have learned to the community.", "This Is Andela. The Wakanda of Africa. The future belongs to us."]
+        self.messageText = ["It's not just a movie; it's a movement. It's a story about a people whose voice has been faint; endowed with great tech skills. It's Wakanda; Andela is recreating the virtual Wakanda to reality. Andela is preparing and repositioning future tech leaders.", "Andela was founded in September 2014 to build a network of tech leaders in Africa to bridge the gap between U.S and African tech sectors.", "Across the world brilliance is evenly distributed but opportunity is not. A quote by Andela CEO, Jeremy Johnson.", "Andela raised $24 million from Mark Zuckerberg and Priscilla Chan’s Fund to train African engineers.", "Andela is a competitive four years paid fellowship program that trains top software talents and on-boards into long distance business engagement with big companies.", "There’s extraordinary untapped talent out there; We just need to remove the barriers to help talented young launch carriers without debt and without leaving home. Quote by Christina Sass, Andela President.", "Andela team winning Saucecode 2018 Hackathon competition. Gaining admission tickets to facebook’s f8 dev conference 2108 at California, USA. Andelans are pacemakers.", "Andelan’s are amazing people with great culture and mindset of changing the world through tech.", "Mark Zuckerberg came to Lagos, Nigeria, in part to meet Andela, a startup he is backing. He was warmly welcomed by Andelans who were glad to have him around in the office.", "Andela is not a brain drain program; It bridges skill gap and empowers youths for leadership.", "Google Africa currently partnered with Andela and Udacity to provide 15,000 scholarships to developers in Africa as a way of giving back to the developer ecosystem. This will increase Andela learning community influence.", "I love learning new things. I have great interest in security and cryptography. I am exploring and I love sharing what I have learned to the community.", "This Is Andela. The Wakanda of Africa. The future belongs to us."]
 
         self.starImage = "Star"
     }
@@ -252,7 +252,9 @@ public class StorySlides : UIViewController {
     }
 
     func stopAudio() {
-        if currentIndex == viewModel.messageText.count {
+        if currentIndex == (viewModel.messageText.count-2) {
+            backgroundSound?.setVolume(0.8, fadeDuration: 1.0)
+        } else if currentIndex == viewModel.messageText.count {
             backgroundSound?.stop()
         }
     }
