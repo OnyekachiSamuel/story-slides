@@ -11,15 +11,41 @@ struct StorySlidesViewModel {
     let instructionText: String
 
     init() {
-        self.headerText = ["Story about us", "In the beginning", "Andela derived from Mandela", "The Funding", "It's Competition", "Talented People", "The Hackathon", "Amazing Andelans", "The Visit", "Empowerment for Leadership", "Partnership", "Impact", "I am Andelan; iOS developer", "#TIA == Wakanda"]
+        self.headerText = ["A story about us…",
+                           "In the beginning…",
+                           "‘Andela’ derives from Mandela",
+                           "The Funding",
+                           "Andela is competitive",
+                           "Talented People",
+                           "The Hackathon",
+                           "Amazing Andelans",
+                           "The Visit",
+                           "Empowerment for Leadership",
+                           "Partnership",
+                           "Positive Impact",
+                           "I am Andelan",
+                           "#TIA == Wakanda"]
 
         self.imageString = ["BlackPanther", "Beginning", "Mandela", "Funding", "Competition", "Idea", "Hackathon", "AmazingPeople", "Visit", "Empowerment", "Partnership", "Impact", "Samuel", "Andela"]
 
-        self.instructionText = "Do you want to embark on the tour? If so, click on the button below."
+        self.instructionText = "Do you want to embark on the tour?\n\nIf so, click on the button below."
 
-        self.launchScreenViewHeaderText = "You are about to watch the story slides of great minds in Africa who are passionate about changing the world through technology."
+        self.launchScreenViewHeaderText = "You are about to watch the story of great minds in Africa who are passionate about changing the world through technology."
 
-        self.messageText = ["It's not just a movie; it's a movement. It's a story about a people whose voice has been faint; endowed with great tech skills. It's Wakanda; Andela is recreating the virtual Wakanda to reality. Andela is preparing and repositioning future tech leaders.", "Andela was founded in September 2014 to build a network of tech leaders in Africa to bridge the gap between U.S and African tech sectors.", "Across the world brilliance is evenly distributed but opportunity is not. A quote by Andela CEO, Jeremy Johnson.", "Andela raised $24 million from Mark Zuckerberg and Priscilla Chan’s Fund to train African engineers.", "Andela is a competitive four years paid fellowship program that trains top software talents and on-boards into long distance business engagement with big companies.", "There’s extraordinary untapped talent out there; We just need to remove the barriers to help talented young launch carriers without debt and without leaving home. Quote by Christina Sass, Andela President.", "Andela team winning Saucecode 2018 Hackathon competition. Gaining admission tickets to facebook’s f8 dev conference 2108 at California, USA. Andelans are pacemakers.", "Andelan’s are amazing people with great culture and mindset of changing the world through tech.", "Mark Zuckerberg came to Lagos, Nigeria, in part to meet Andela, a startup he is backing. He was warmly welcomed by Andelans who were glad to have him around in the office.", "Andela is not a brain drain program; It bridges skill gap and empowers youths for leadership.", "Google Africa currently partnered with Andela and Udacity to provide 15,000 scholarships to developers in Africa as a way of giving back to the developer ecosystem. This will increase Andela learning community influence.", "Andela developers adding value and making positive impact with one of Andela’s business partner.", "I am in for big thing with Swift. I love challenging tasks and I produce result. I love learning new things. I have great interest in security and cryptography. I am exploring and I love sharing what I have learned to the community.", "This Is Andela. The Wakanda of Africa. The future belongs to us."]
+        self.messageText = ["It’s not just a movie. It’s a movement. It’s a story about a people whose voice has been faint. A people endowed with great technical skills. It is Wakanda: Andela is transforming the virtual Wakanda into reality. Andela is preparing and repositioning future tech leaders.",
+                            "Andela was founded in September 2014 to build a network of tech leaders in Africa to bridge the gap between U.S. and African tech sectors.",
+                            "“Across the world brilliance is evenly distributed but opportunity is not.”\n\n—Jeremy Johnson, Andela CEO",
+                            "Andela raised $24 million from Mark Zuckerberg’s and Priscilla Chan’s Fund to train African engineers.",
+                            "Andela is a competitive four-year paid fellowship program that trains top software talent and on-boards them into long distance business engagements with large companies.",
+                            "”There’s extraordinary untapped talent out there. We just need to remove the barriers to help talented young people launch careers without debt and without leaving home.”\n\n—Christina Sass, Andela President",
+                            "Andela team winning the Saucecode 2018 Hackathon competition, thereby gaining admission tickets to Facebook’s F8 Developer Conference 2108 in California, USA. Andelans are pacesetters.",
+                            "Andelans are amazing people with great culture and the mindset of changing the world through technology.",
+                            "Mark Zuckerberg came to Lagos, Nigeria, in part to meet Andela, a startup he is backing. He was warmly welcomed by Andelans who were thrilled to have him in the office.",
+                            "Andela is not a brain drain program. Andela bridges skill gaps and empowers youths for leadership.",
+                            "Google Africa is currently partnered with Andela and Udacity to provide 15,000 scholarships to developers in Africa as a way of giving back to the developer ecosystem. This will increase Andela’s learning community influence.",
+                            "Andela developers are adding value and making positive impact with Andela’s business partners.",
+                            "I hope to achieve great things with Swift. I love challenging tasks and I produce results. I love learning new things. I have a great interest in security and cryptography. I am exploring and I love sharing what I have learned with the community.",
+                            "This Is Andela. The Wakanda of Africa.\n\nThe future belongs to us."]
 
         self.starImage = "Star"
     }
@@ -219,6 +245,8 @@ public class StorySlides : UIViewController {
 
         view.addSubview(launchScreen)
         view.addSubview(tourButton)
+
+        //tourButtonPressed(tourButton)
     }
 
     @objc
@@ -372,7 +400,7 @@ class LaunchScreenView: UIView {
         instructionLabel.contentMode = .scaleAspectFill
         instructionLabel.font = UIFont.boldSystemFont(ofSize: 24)
         instructionLabel.lineBreakMode = .byTruncatingTail
-        instructionLabel.numberOfLines = 3
+        instructionLabel.numberOfLines = 0
         instructionLabel.text = instructionText
         instructionLabel.textAlignment = .center
         instructionLabel.textColor = UIColor.white
@@ -466,7 +494,7 @@ class ScreenView: UIView {
         messageLabel.lineBreakMode = .byTruncatingTail
         messageLabel.numberOfLines = 8
         messageLabel.text = messageContent
-        messageLabel.textAlignment = .justified
+        messageLabel.textAlignment = .natural
         messageLabel.textColor = UIColor.white
         messageLabel.sizeToFit()
 
@@ -510,4 +538,3 @@ class ScreenView: UIView {
 }
 
 PlaygroundPage.current.liveView = StorySlides()
-
