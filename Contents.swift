@@ -112,9 +112,7 @@ public class StorySlides : UIViewController {
         UIView.animate(withDuration: 0.75,
                        animations: { slide.transform = .identity },
                        completion: { _ in
-                        slide.startAnimatingStars()
-
-                        self.currentSlide?.stopAnimatingStars()
+                        slide.startAnimating()
                         self.currentSlide?.removeFromSuperview()
 
                         self.currentSlide = slide
@@ -129,9 +127,8 @@ public class StorySlides : UIViewController {
         UIView.animate(withDuration: 0.75,
                        animations: { slide.transform = .identity },
                        completion: { _ in
-                        slide.startAnimatingStars()
+                        slide.startAnimating()
 
-                        self.currentSlide?.stopAnimatingStars()
                         self.currentSlide?.removeFromSuperview()
 
                         self.currentSlide = slide
@@ -146,9 +143,7 @@ public class StorySlides : UIViewController {
         UIView.animate(withDuration: 0.75,
                        animations: { slide.transform = .identity },
                        completion: { _ in
-                        slide.startAnimatingStars()
-
-                        self.currentSlide?.stopAnimatingStars()
+                        slide.startAnimating()
                         self.currentSlide?.removeFromSuperview()
 
                         self.currentSlide = slide
@@ -164,10 +159,7 @@ public class StorySlides : UIViewController {
                           to: slide,
                           duration: 0.75,
                           options: .transitionCurlUp) { _ in
-                            slide.startAnimatingStars()
-
-                            self.currentSlide?.stopAnimatingStars()
-
+                            slide.startAnimating()
                             self.currentSlide = slide
         }
     }
@@ -181,9 +173,8 @@ public class StorySlides : UIViewController {
                           to: slide,
                           duration: 0.75,
                           options: .transitionCrossDissolve) { _ in
-                            slide.startAnimatingStars()
+                            slide.startAnimating()
 
-                            self.currentSlide?.stopAnimatingStars()
 
                             self.currentSlide = slide
         }
@@ -196,17 +187,7 @@ public class StorySlides : UIViewController {
                                                           width: view.frame.width, height: view.frame.height), launchContent: viewModel.launchScreenViewHeaderText, instructionText: viewModel.instructionText, starString: viewModel.starImage)
 
         let pulse = CASpringAnimation(keyPath: "transform.scale")
-
-        pulse.autoreverses = true
-        pulse.damping = 1.0
-        pulse.duration = 0.6
-        pulse.fromValue = 0.95
-        pulse.initialVelocity = 0.5
-        pulse.repeatCount = 1000000
-        pulse.toValue = 1.0
-
-        let pulse = CASpringAnimation(keyPath: "transform.scale")
-
+        
         pulse.autoreverses = true
         pulse.damping = 1.0
         pulse.duration = 0.6
@@ -234,7 +215,7 @@ public class StorySlides : UIViewController {
         launchScreen.tag = 10
         tourButton.tag = 12
 
-        view.addSubview(launchScren)
+        view.addSubview(launchScreen)
         view.addSubview(tourButton)
     }
 
@@ -367,9 +348,8 @@ class LaunchScreenView: UIView {
 
         let paragraphStyle = NSMutableParagraphStyle()
 
-
         let starImageView = UIImageView(frame: CGRect(x: 164,
-                                                      y: 618,
+                                                      y: 600,
                                                       width: frame.width - 327,
                                                       height: frame.height - 624))
 
@@ -424,8 +404,11 @@ class LaunchScreenView: UIView {
 class ScreenView: UIView {
 
     var headerText: String!
+    var headerTextLabel: UILabel!
     var messageContent: String!
+    var messageLabel: UILabel!
     var screenImage: UIImage!
+    var screenImageView: UIImageView!
     var starImage: UIImage!
     var starImageView: UIImageView!
 
@@ -449,23 +432,24 @@ class ScreenView: UIView {
     }
 
     func setLayout() {
-        let headerTextLabel = UILabel(frame: CGRect(x: frame.origin.x + 10,
-                                                    y: frame.origin.y + 15,
-                                                    width: frame.size.width - 20, height: frame.size.height * 1.1))
+        headerTextLabel = UILabel(frame: CGRect(x: frame.origin.x + 10,
+                                                y: frame.origin.y + 15,
+                                                width: frame.size.width - 20, height: frame.size.height * 1.1))
 
-        let messageLabel = UILabel(frame: CGRect(x: frame.origin.x + 18,
-                                                 y: frame.size.height * 0.5 + 70,
-                                                 width: frame.size.width - 18, height: frame.height * 1.5))
+        messageLabel = UILabel(frame: CGRect(x: frame.origin.x + 18,
+                                             y: frame.size.height * 0.5 + 70,
+                                             width: frame.size.width - 18, height: frame.height * 1.5))
 
-        let screenImageView = UIImageView(frame: CGRect(x: frame.origin.x,
-                                                        y: frame.origin.y,
-                                                        width: frame.width + 20,
-                                                        height: frame.height * 0.5))
+        screenImageView = UIImageView(frame: CGRect(x: frame.origin.x,
+                                                    y: frame.origin.y,
+                                                    width: frame.width + 20,
+                                                    height: frame.height * 0.5))
 
         starImageView = UIImageView(frame: CGRect(x: frame.width - 191,
-                                                  y: frame.height + 70,
+                                                  y: frame.height + 52,
                                                   width: frame.width - 307,
                                                   height: frame.height - 504))
+
 
         headerTextLabel.font = UIFont.boldSystemFont(ofSize: 22.0)
         headerTextLabel.lineBreakMode = .byTruncatingTail
@@ -494,20 +478,32 @@ class ScreenView: UIView {
     }
 
     func startAnimating() {
-        UIView.animate(withDuration: 0.75,
-                       delay: 0.25,
-                       options: <#T##UIViewAnimationOptions#>,
-                       animations: <#T##() -> Void#>, completion: <#T##((Bool) -> Void)?##((Bool) -> Void)?##(Bool) -> Void#>)
 
-        UIView.animate(withDuration: 1.0) {
-            starImageView.transform = CGAffineTransform(rotationAngle: .pi)
+        UIView.animate(withDuration: 0.9,
+                       delay: 0.4,
+                       options: .curveEaseOut,
+                       animations: {
+                        
+            self.messageLabel.transform = .init(scaleX: 1.0, y: 0.9)
+        }, completion: nil)
+
+        UIView.animate(withDuration: 1.0,
+                       animations: {
+
+            self.starImageView.transform = CGAffineTransform(rotationAngle: .pi)
+        }) { _ in
+            let animation = CABasicAnimation(keyPath: "transform.scale")
+
+            animation.autoreverses = true
+            animation.fromValue = 0.8
+            animation.toValue = 1.5
+            animation.repeatCount = Float.infinity
+            animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+
+            self.starImageView.layer.add(animation, forKey: "pulsating")
         }
     }
-
-//    func stopAnimating() {
-//    }
 }
-
 
 PlaygroundPage.current.liveView = StorySlides()
 
