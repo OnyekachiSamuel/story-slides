@@ -34,16 +34,16 @@ struct StorySlidesViewModel {
         self.launchScreenViewHeaderText = "You are about to watch the story of great minds in Africa who are passionate about changing the world through technology."
 
         self.messageText = ["It’s not just a movie. It’s a movement. It’s a story about a people whose voice has been faint. A people endowed with great technical skills. It is Wakanda: Andela is transforming the virtual Wakanda into reality. Andela is preparing and repositioning future tech leaders.",
-                            "Andela was founded in September 2014 to build a network of tech leaders in Africa to bridge the gap between U.S. and African tech sectors.",
+                            "Andela was founded in 2014 to build a network of tech leaders in Africa and bridge the gap between U.S. and African tech sectors.",
                             "“Across the world brilliance is evenly distributed but opportunity is not.”\n\n—Jeremy Johnson, Andela CEO",
                             "Andela raised $24 million from Mark Zuckerberg’s and Priscilla Chan’s Fund to train African engineers.",
-                            "Andela is a competitive four-year paid fellowship program that trains top software talent and on-boards them into long distance business engagements with large companies.",
+                            "Andela is a competitive four-year paid technical leadership program that invests in top software talent and pairs them with global tech companies.",
                             "”There’s extraordinary untapped talent out there. We just need to remove the barriers to help talented young people launch careers without debt and without leaving home.”\n\n—Christina Sass, Andela President",
                             "Andela team winning the Saucecode 2018 Hackathon competition, thereby gaining admission tickets to Facebook’s F8 Developer Conference 2108 in California, USA. Andelans are pacesetters.",
-                            "Andelans are amazing people with great culture and the mindset of changing the world through technology.",
-                            "Mark Zuckerberg came to Lagos, Nigeria, in part to meet Andela, a startup he is backing. He was warmly welcomed by Andelans who were thrilled to have him in the office.",
-                            "Andela is not a brain drain program. Andela bridges skill gaps and empowers youths for leadership.",
-                            "Google Africa is currently partnered with Andela and Udacity to provide 15,000 scholarships to developers in Africa as a way of giving back to the developer ecosystem. This will increase Andela’s learning community influence.",
+                            "Andelans are amazing people with a great culture and drive to change the world through technology.",
+                            "Mark Zuckerberg came to Lagos, Nigeria, in part to meet Andela, a startup backed by the Chan Zuckerberg Initiative. He was warmly welcomed by Andelans who were thrilled to have him in the office.",
+                            "Andela bridges skill gaps and empowers youths for leadership.",
+                            "Google Africa is currently partnered with Andela and Udacity to provide 15,000 scholarships to developers in Africa as a way of giving back to the developer ecosystem.",
                             "In celebration of International Women’s Day, Andela hosted the Andela Women In Tech Summit. This reinforces Andela’s commitment to diversity and inclusion in the tech ecosystem. Andela is committed to attracting and developing female talent.",
                             "Andela developers are adding value and making positive impact with Andela’s business partners.",
                             "I hope to achieve great things with Swift. I love challenging tasks and I produce results. I love learning new things. I have a great interest in security and cryptography. I am exploring and I love sharing what I have learned with the community.",
@@ -240,19 +240,17 @@ public class StorySlides : UIViewController {
         tourButton.titleEdgeInsets = UIEdgeInsetsMake(10,10,15,10)
         tourButton.titleLabel?.adjustsFontSizeToFitWidth = true
 
-        tourButton.addTarget(self, action: #selector(StorySlides.tourButtonPressed(_:)), for: .touchUpInside)
+        tourButton.addTarget(self, action: #selector(StorySlides.tourButtonPressed), for: .touchUpInside)
 
         launchScreen.tag = 10
         tourButton.tag = 12
 
         view.addSubview(launchScreen)
         view.addSubview(tourButton)
-
-        //tourButtonPressed(tourButton)
     }
 
     @objc
-    func tourButtonPressed(_ sender: UIButton) {
+    func tourButtonPressed() {
         if let launchScreenViewViewWithTag = view.viewWithTag(10),
             let tourButtonViewWithTag = view.viewWithTag(12) {
             launchScreenViewViewWithTag.removeFromSuperview()
