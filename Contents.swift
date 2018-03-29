@@ -44,7 +44,7 @@ struct StorySlidesViewModel {
                             "Mark Zuckerberg came to Lagos, Nigeria, in part to meet Andela, a startup he is backing. He was warmly welcomed by Andelans who were thrilled to have him in the office.",
                             "Andela is not a brain drain program. Andela bridges skill gaps and empowers youths for leadership.",
                             "Google Africa is currently partnered with Andela and Udacity to provide 15,000 scholarships to developers in Africa as a way of giving back to the developer ecosystem. This will increase Andela’s learning community influence.",
-                            "In celebration of International Women's Day, Andela hosted the Andela Women In Tech Summit. This reinforces Andela's commitment to diversity and inclusion in the tech ecosystem. Andela is committed to attracting and developing female talent.",
+                            "In celebration of International Women’s Day, Andela hosted the Andela Women In Tech Summit. This reinforces Andela’s commitment to diversity and inclusion in the tech ecosystem. Andela is committed to attracting and developing female talent.",
                             "Andela developers are adding value and making positive impact with Andela’s business partners.",
                             "I hope to achieve great things with Swift. I love challenging tasks and I produce results. I love learning new things. I have a great interest in security and cryptography. I am exploring and I love sharing what I have learned with the community.",
                             "This Is Andela. The Wakanda of Africa.\n\nThe future belongs to us."]
@@ -247,6 +247,8 @@ public class StorySlides : UIViewController {
 
         view.addSubview(launchScreen)
         view.addSubview(tourButton)
+
+        //tourButtonPressed(tourButton)
     }
 
     @objc
@@ -513,19 +515,22 @@ class ScreenView: UIView {
 
         let pulsate = CABasicAnimation(keyPath: "transform.scale")
 
-        UIView.animate(withDuration: 0.9, animations: {
+        UIView.animate(withDuration: 0.9,
+                       delay: 0.2,
+                       options: .curveEaseInOut,
+                       animations: {
 
             pulsate.autoreverses = true
-            pulsate.fromValue = 0.5
-            pulsate.toValue = 1.0
+            pulsate.fromValue = 1.0
+            pulsate.toValue = 1.1
             pulsate.repeatCount = 1.0
-            pulsate.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+            pulsate.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
             self.headerTextLabel.layer.add(pulsate, forKey: "pulsate")
         }, completion: nil)
 
         UIView.animate(withDuration: 0.9,
                        delay: 0.4,
-                       options: .curveEaseOut,
+                       options: .curveEaseInOut,
                        animations: {
                         
             self.messageLabel.transform = .init(scaleX: 1.0, y: 0.9)
@@ -541,7 +546,7 @@ class ScreenView: UIView {
             pulsate.fromValue = 0.8
             pulsate.toValue = 1.5
             pulsate.repeatCount = Float.infinity
-            pulsate.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+            pulsate.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
 
             self.starImageView.layer.add(pulsate, forKey: "pulsating")
         }
