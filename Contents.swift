@@ -22,11 +22,12 @@ struct StorySlidesViewModel {
                            "The Visit",
                            "Empowerment for Leadership",
                            "Partnership",
+                           "Gender Inclusiveness",
                            "Positive Impact",
                            "I am Andelan",
                            "#TIA == Wakanda"]
 
-        self.imageString = ["BlackPanther", "Beginning", "Mandela", "Funding", "Competition", "Idea", "Hackathon", "AmazingPeople", "Visit", "Empowerment", "Partnership", "Impact", "Samuel", "Andela"]
+        self.imageString = ["BlackPanther", "Beginning", "Mandela", "Funding", "Competition", "Idea", "Hackathon", "AmazingPeople", "Visit", "Empowerment", "Partnership", "WomenInTech", "Impact", "Samuel", "Andela"]
 
         self.instructionText = "Do you want to embark on the tour?\n\nIf so, click on the button below."
 
@@ -43,6 +44,7 @@ struct StorySlidesViewModel {
                             "Mark Zuckerberg came to Lagos, Nigeria, in part to meet Andela, a startup he is backing. He was warmly welcomed by Andelans who were thrilled to have him in the office.",
                             "Andela is not a brain drain program. Andela bridges skill gaps and empowers youths for leadership.",
                             "Google Africa is currently partnered with Andela and Udacity to provide 15,000 scholarships to developers in Africa as a way of giving back to the developer ecosystem. This will increase Andela’s learning community influence.",
+                            "In celebration of International Women's Day, Andela hosted the Andela Women In Tech Summit. This reinforces Andela's commitment to diversity and inclusion in the tech ecosystem. Andela is committed to attracting and developing female talent.",
                             "Andela developers are adding value and making positive impact with Andela’s business partners.",
                             "I hope to achieve great things with Swift. I love challenging tasks and I produce results. I love learning new things. I have a great interest in security and cryptography. I am exploring and I love sharing what I have learned with the community.",
                             "This Is Andela. The Wakanda of Africa.\n\nThe future belongs to us."]
@@ -221,7 +223,7 @@ public class StorySlides : UIViewController {
         pulse.duration = 0.6
         pulse.fromValue = 0.95
         pulse.initialVelocity = 0.5
-        pulse.repeatCount = 1000000
+        pulse.repeatCount = Float.infinity
         pulse.toValue = 1.0
 
         let tourButton = UIButton()
@@ -245,8 +247,6 @@ public class StorySlides : UIViewController {
 
         view.addSubview(launchScreen)
         view.addSubview(tourButton)
-
-        //tourButtonPressed(tourButton)
     }
 
     @objc
@@ -511,6 +511,18 @@ class ScreenView: UIView {
 
     func startAnimating() {
 
+        let pulsate = CABasicAnimation(keyPath: "transform.scale")
+
+        UIView.animate(withDuration: 0.9, animations: {
+
+            pulsate.autoreverses = true
+            pulsate.fromValue = 0.5
+            pulsate.toValue = 1.0
+            pulsate.repeatCount = 1.0
+            pulsate.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+            self.headerTextLabel.layer.add(pulsate, forKey: "pulsate")
+        }, completion: nil)
+
         UIView.animate(withDuration: 0.9,
                        delay: 0.4,
                        options: .curveEaseOut,
@@ -524,17 +536,17 @@ class ScreenView: UIView {
 
             self.starImageView.transform = CGAffineTransform(rotationAngle: .pi)
         }) { _ in
-            let animation = CABasicAnimation(keyPath: "transform.scale")
 
-            animation.autoreverses = true
-            animation.fromValue = 0.8
-            animation.toValue = 1.5
-            animation.repeatCount = Float.infinity
-            animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+            pulsate.autoreverses = true
+            pulsate.fromValue = 0.8
+            pulsate.toValue = 1.5
+            pulsate.repeatCount = Float.infinity
+            pulsate.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
 
-            self.starImageView.layer.add(animation, forKey: "pulsating")
+            self.starImageView.layer.add(pulsate, forKey: "pulsating")
         }
     }
 }
 
 PlaygroundPage.current.liveView = StorySlides()
+
